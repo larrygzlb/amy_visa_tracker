@@ -1,0 +1,30 @@
+name: Visa check
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 minutes (UTC); GitHub may start it a few minutes late
+  workflow_dispatch:          # "Run workflow" button on the Actions tab
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TZ: Asia/Shanghai       # timestamps in the notification use China time
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install Chromium
+        run: uv run --with playwright python -m playwright install --with-deps chromium
+
+      - name: Write .env from the ENV_FILE secret
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          if [ -z "$ENV_FILE" ]; then echo "The ENV_FILE secret is not set" >&2; exit 1; fi
+          printf '%s\n' "$ENV_FILE" > .env
+
+      - name: Run check
+        run: ./check_once.sh

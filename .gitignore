@@ -1,0 +1,10 @@
+data/
+__pycache__/
+*.png
+
+# Personal data and keys: never commit
+.env
+config.json
+
+# Local Claude Code settings
+.claude/
