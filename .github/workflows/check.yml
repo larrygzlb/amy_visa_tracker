@@ -7,14 +7,16 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04     # pinned: ubuntu-latest moves to Ubuntu 26 on 2026-10-19
     timeout-minutes: 15
     env:
       TZ: Asia/Shanghai       # timestamps in the notification use China time
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: false   # no lock/requirements file to key a cache on
 
       - name: Install Chromium
         run: uv run --with playwright python -m playwright install --with-deps chromium

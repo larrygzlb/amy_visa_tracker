@@ -356,7 +356,8 @@ if __name__ == "__main__":
         print(f"VFS: {last['vfs']['status']}")
         for q in last["ibz"].get("queries", []):
             print(f"IBZ: {q['field']}={q['value']}: {q['status']}")
-        sys.exit(0)
+        # Exit 1 if a check errored ("No Result" is fine), so a GitHub Actions run shows as failed
+        sys.exit(0 if last["vfs"]["ok"] and last["ibz"]["ok"] else 1)
 
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     url = f"http://{HOST}:{PORT}"
