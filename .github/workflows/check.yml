@@ -1,9 +1,14 @@
 name: Visa check
 
+# Triggered every 30 minutes by cron-job.org through the GitHub API (workflow_dispatch).
+# GitHub's own `schedule` trigger is not used: it skipped most runs for this repo.
 on:
-  schedule:
-    - cron: "*/30 * * * *"   # every 30 minutes (UTC); GitHub may start it a few minutes late
-  workflow_dispatch:          # "Run workflow" button on the Actions tab
+  workflow_dispatch:          # API calls from cron-job.org, and the "Run workflow" button
+
+# Never run two checks at once; a trigger that arrives during a run waits for it
+concurrency:
+  group: visa-check
+  cancel-in-progress: false
 
 jobs:
   check:

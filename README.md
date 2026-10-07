@@ -22,6 +22,11 @@ Results are saved to `data/checks.jsonl`.
 
 ## GitHub Actions
 
-`.github/workflows/check.yml` runs `check_once.sh` every 30 minutes. Add one repository secret,
-`ENV_FILE`, containing the full contents of your `.env`
+`.github/workflows/check.yml` runs `check_once.sh`. Add one repository secret, `ENV_FILE`,
+containing the full contents of your `.env`
 (Settings → Secrets and variables → Actions → New repository secret).
+
+The workflow is started every 30 minutes by [cron-job.org](https://cron-job.org), which calls
+`POST https://api.github.com/repos/<owner>/<repo>/actions/workflows/check.yml/dispatches`
+with body `{"ref":"main"}` and a fine-grained token that has **Actions: read and write** on this
+repository. GitHub's built-in `schedule` trigger skipped most runs, so it is not used.
